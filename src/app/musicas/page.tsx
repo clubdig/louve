@@ -1,0 +1,267 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { AppShell } from '@/components/app-shell'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { Plus, Search, Music, ExternalLink, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
+
+interface Musica {
+  id: string
+  titulo: string
+  artista: string
+  tom_original: string
+  tom_atual: string
+  versao: string
+  bpm: number
+  youtube: string
+  cifra: string
+  spotify: string
+  playback: string
+  multitrack: string
+  categoria: string
+  observacoes: string
+}
+
+const categorias = [
+  { value: 'adoracao', label: 'Adoração' },
+  { value: 'celebracao', label: 'Celebração' },
+  { value: 'ceia', label: 'Ceia' },
+  { value: 'oferta', label: 'Oferta' },
+  { value: 'encerramento', label: 'Encerramento' },
+  { value: 'especial', label: 'Especial' },
+]
+
+const categoriaColors: Record<string, string> = {
+  adoracao: 'bg-purple-100 text-purple-800',
+  celebracao: 'bg-yellow-100 text-yellow-800',
+  ceia: 'bg-blue-100 text-blue-800',
+  oferta: 'bg-green-100 text-green-800',
+  encerramento: 'bg-gray-100 text-gray-800',
+  especial: 'bg-red-100 text-red-800',
+}
+
+export default function MusicasPage() {
+  const [musicas, setMusicas] = useState<Musica[]>([])
+  const [search, setSearch] = useState('')
+  const [filtroCategoria, setFiltroCategoria] = useState('all')
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [editando, setEditando] = useState<Musica | null>(null)
+  const [form, setForm] = useState({
+    titulo: '', artista: '', tom_original: '', tom_atual: '', versao: '',
+    bpm: '', youtube: '', cifra: '', spotify: '', playback: '', multitrack: '',
+    categoria: 'adoracao', observacoes: '',
+  })
+
+  useEffect(() => { loadMusicas() }, [])
+
+  async function loadMusicas() {
+    const params = new URLSearchParams()
+    if (search) params.set('search', search)
+    if (filtroCategoria && filtroCategoria !== 'all') params.set('categoria', filtroCategoria)
+    const res = await fetch(`/api/musicas?${params}`)
+    const data = await res.json()
+    setMusicas(Array.isArray(data) ? data : [])
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(loadMusicas, 300)
+    return () => clearTimeout(timer)
+  }, [search, filtroCategoria])
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    const body = { ...form, bpm: form.bpm ? parseInt(form.bpm) : null }
+
+    const url = editando ? `/api/musicas/${editando.id}` : '/api/musicas'
+    const method = editando ? 'PUT' : 'POST'
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+
+    if (res.ok) {
+      toast.success(editando ? 'Música atualizada!' : 'Música criada!')
+      setDialogOpen(false)
+      setEditando(null)
+      resetForm()
+      loadMusicas()
+    } else {
+      toast.error('Erro ao salvar música')
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm('Tem certeza que deseja excluir esta música?')) return
+    const res = await fetch(`/api/musicas/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      toast.success('Música excluída!')
+      loadMusicas()
+    }
+  }
+
+  function resetForm() {
+    setForm({
+      titulo: '', artista: '', tom_original: '', tom_atual: '', versao: '',
+      bpm: '', youtube: '', cifra: '', spotify: '', playback: '', multitrack: '',
+      categoria: 'adoracao', observacoes: '',
+    })
+  }
+
+  function openEdit(m: Musica) {
+    setEditando(m)
+    setForm({
+      titulo: m.titulo, artista: m.artista || '', tom_original: m.tom_original || '',
+      tom_atual: m.tom_atual || '', versao: m.versao || '', bpm: m.bpm?.toString() || '',
+      youtube: m.youtube || '', cifra: m.cifra || '', spotify: m.spotify || '',
+      playback: m.playback || '', multitrack: m.multitrack || '',
+      categoria: m.categoria || 'adoracao', observacoes: m.observacoes || '',
+    })
+    setDialogOpen(true)
+  }
+
+  return (
+    <AppShell>
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Músicas</h1>
+            <p className="text-muted-foreground">{musicas.length} músicas cadastradas</p>
+          </div>
+          <Dialog open={dialogOpen} onOpenChange={(v) => { setDialogOpen(v); if (!v) { setEditando(null); resetForm() } }}>
+            <DialogTrigger render={<Button />}>
+              <Button><Plus className="w-4 h-4 mr-2" /> Nova Música</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{editando ? 'Editar Música' : 'Nova Música'}</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Título *</Label>
+                    <Input value={form.titulo} onChange={e => setForm({...form, titulo: e.target.value})} required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Artista</Label>
+                    <Input value={form.artista} onChange={e => setForm({...form, artista: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tom Original</Label>
+                    <Input value={form.tom_original} onChange={e => setForm({...form, tom_original: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tom Atual</Label>
+                    <Input value={form.tom_atual} onChange={e => setForm({...form, tom_atual: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Versão</Label>
+                    <Input value={form.versao} onChange={e => setForm({...form, versao: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>BPM</Label>
+                    <Input type="number" value={form.bpm} onChange={e => setForm({...form, bpm: e.target.value})} />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>Categoria</Label>
+                    <Select value={form.categoria} onValueChange={v => { if (v) setForm({...form, categoria: v}) }}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {categorias.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>YouTube</Label>
+                    <Input value={form.youtube} onChange={e => setForm({...form, youtube: e.target.value})} placeholder="https://youtube.com/..." />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>Cifra Club</Label>
+                    <Input value={form.cifra} onChange={e => setForm({...form, cifra: e.target.value})} placeholder="https://www.cifraclub.com.br/..." />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Spotify</Label>
+                    <Input value={form.spotify} onChange={e => setForm({...form, spotify: e.target.value})} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Playback</Label>
+                    <Input value={form.playback} onChange={e => setForm({...form, playback: e.target.value})} />
+                  </div>
+                  <div className="space-y-2 sm:col-span-2">
+                    <Label>Observações</Label>
+                    <Textarea value={form.observacoes} onChange={e => setForm({...form, observacoes: e.target.value})} />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => { setDialogOpen(false); setEditando(null); resetForm() }}>Cancelar</Button>
+                  <Button type="submit">{editando ? 'Salvar' : 'Criar'}</Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input className="pl-9" placeholder="Buscar música ou artista..." value={search} onChange={e => setSearch(e.target.value)} />
+          </div>
+          <Select value={filtroCategoria} onValueChange={v => { if (v) setFiltroCategoria(v); }}>
+            <SelectTrigger className="w-full sm:w-48"><SelectValue placeholder="Todas categorias" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas categorias</SelectItem>
+              {categorias.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {musicas.map(m => (
+            <Card key={m.id} className="group hover:shadow-md transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-lg truncate">{m.titulo}</CardTitle>
+                    <p className="text-sm text-muted-foreground truncate">{m.artista}</p>
+                  </div>
+                  <Badge className={categoriaColors[m.categoria] || 'bg-gray-100'}>
+                    {categorias.find(c => c.value === m.categoria)?.label || m.categoria}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex gap-2 flex-wrap">
+                  {m.tom_original && <Badge variant="outline">Tom: {m.tom_atual || m.tom_original}</Badge>}
+                  {m.bpm && <Badge variant="outline">{m.bpm} BPM</Badge>}
+                  {m.versao && <Badge variant="outline">{m.versao}</Badge>}
+                </div>
+                <div className="flex gap-2">
+                  {m.youtube && <a href={m.youtube} target="_blank" rel="noopener noreferrer"><Button variant="ghost" size="sm"><ExternalLink className="w-4 h-4" /></Button></a>}
+                  {m.cifra && <a href={m.cifra} target="_blank" rel="noopener noreferrer"><Button variant="ghost" size="sm"><Music className="w-4 h-4" /></Button></a>}
+                  <Button variant="ghost" size="sm" onClick={() => openEdit(m)}>Editar</Button>
+                  <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDelete(m.id)}><Trash2 className="w-4 h-4" /></Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {musicas.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground">
+            <Music className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>Nenhuma música encontrada</p>
+          </div>
+        )}
+      </div>
+    </AppShell>
+  )
+}
