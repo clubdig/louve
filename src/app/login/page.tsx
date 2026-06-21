@@ -51,7 +51,7 @@ export default function LoginPage() {
           <div className="mx-auto mb-4 w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center">
             <Music className="w-8 h-8 text-white" />
           </div>
-          <CardTitle className="text-2xl">VSProclamai</CardTitle>
+          <CardTitle className="text-2xl">Louve</CardTitle>
           <CardDescription>Sistema de Gestão do Ministério de Louvor</CardDescription>
         </CardHeader>
         <CardContent>

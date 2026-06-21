@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ variable: "--font-sans", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VSProclamai - Ministério de Louvor",
+  title: "Louve - Ministério de Louvor",
   description: "Sistema de Gestão do Ministério de Louvor",
 };
 

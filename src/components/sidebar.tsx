@@ -34,8 +34,8 @@ export function Sidebar() {
   const nav = (
     <nav className="flex flex-col h-full">
       <div className="p-6">
-        <h1 className="text-xl font-bold text-purple-400">VSProclamai</h1>
-        <p className="text-xs text-muted-foreground mt-1">Ministério de Louvor</p>
+        <h1 className="text-xl font-bold text-purple-400">Louve</h1>
+        <p className="text-xs text-muted-foreground mt-1">Gestão do Louvor</p>
       </div>
 
       <div className="flex-1 px-3 space-y-1">
