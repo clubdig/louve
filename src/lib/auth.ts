@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'vsproclamai-secret-key'
+const JWT_SECRET = process.env.JWT_SECRET || 'louve-secret-key-2026'
 
 export interface JWTPayload {
   userId: string
