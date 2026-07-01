@@ -142,6 +142,34 @@ export default function DashboardPage() {
           <p className="text-muted-foreground text-sm md:text-base">Bem-vindo ao Louve</p>
         </div>
 
+        {/* Playlist da Semana */}
+        {!stats.loading && (ultimaPlaylist?.repertorios?.length ?? 0) > 0 && (
+          <div
+            className="glass rounded-2xl p-5 cursor-pointer hover:glow-purple-sm transition-all group relative overflow-hidden"
+            onClick={() => { setCurrentSongIdx(0); setPlaying(false); setPlaylistOpen(true) }}
+          >
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10 flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl gradient-purple flex items-center justify-center shrink-0 glow-purple-sm">
+                <Headphones className="w-7 h-7 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg font-bold text-gradient">Playlist da Semana</h3>
+                <p className="text-sm text-muted-foreground">{ultimaPlaylist?.repertorios?.length} músicas para ouvir e praticar</p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
+                  <Play className="w-3 h-3" /> Ouvir agora
+                </div>
+                <div className="w-10 h-10 rounded-full gradient-purple flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Play className="w-5 h-5 text-white ml-0.5" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-3 gap-3 md:gap-4">
           {cards.map((card) => {
             const Icon = card.icon
@@ -282,33 +310,6 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Playlist da Semana */}
-        {!stats.loading && (ultimaPlaylist?.repertorios?.length ?? 0) > 0 && (
-          <div
-            className="glass rounded-2xl p-5 cursor-pointer hover:glow-purple-sm transition-all group relative overflow-hidden"
-            onClick={() => { setCurrentSongIdx(0); setPlaying(false); setPlaylistOpen(true) }}
-          >
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10 flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl gradient-purple flex items-center justify-center shrink-0 glow-purple-sm">
-                <Headphones className="w-7 h-7 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-bold text-gradient">Playlist da Semana</h3>
-                <p className="text-sm text-muted-foreground">{ultimaPlaylist?.repertorios?.length} músicas para ouvir e praticar</p>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
-                  <Play className="w-3 h-3" /> Ouvir agora
-                </div>
-                <div className="w-10 h-10 rounded-full gradient-purple flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Play className="w-5 h-5 text-white ml-0.5" />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       <Dialog open={dialogOpen === 'musicas'} onOpenChange={(v) => { if (!v) { setDialogOpen(null); setSearch('') } }}>
