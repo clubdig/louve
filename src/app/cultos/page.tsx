@@ -365,7 +365,7 @@ export default function CultosPage() {
 
         {/* Dialog */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto glass-strong border-glow">
+          <DialogContent className="w-[95vw] h-[90vh] max-w-none overflow-y-auto glass-strong border-glow p-6">
             <DialogHeader>
               <DialogTitle className="text-gradient">{editingId ? 'Editar Culto' : 'Novo Culto'}</DialogTitle>
             </DialogHeader>
