@@ -371,9 +371,9 @@ export default function EscalasPage() {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto glass-strong border-glow p-6">
+        <DialogContent className="!max-w-[95vw] !w-[95vw] max-h-[90vh] overflow-y-auto glass-strong border-glow p-6">
           <DialogHeader>
-            <DialogTitle className="text-gradient">Repertório do Culto</DialogTitle>
+            <DialogTitle className="text-gradient text-xl">Repertório do Culto</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             {repertorio.length > 0 && (
@@ -389,14 +389,14 @@ export default function EscalasPage() {
                 (m.artista && m.artista.toLowerCase().includes(searchText.toLowerCase()))
               )
               return (
-                <div key={i} className={`flex items-center gap-2 p-3 rounded-xl border transition-all ${isLast ? 'border-orange-500/30 gradient-purple-subtle' : 'glass'}`}>
-                  <span className="text-lg font-bold text-purple-400 min-w-[40px] text-center shrink-0">{i + 1}º</span>
-                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-[1fr_100px_140px] gap-2 items-center">
-                    <div className="relative">
+                <div key={i} className={`flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-xl border transition-all ${isLast ? 'border-orange-500/30 gradient-purple-subtle' : 'glass'}`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl font-bold text-purple-400 min-w-[40px] text-center shrink-0">{i + 1}º</span>
+                    <div className="flex-1 min-w-0 relative">
                       <div className="flex items-center border border-border/50 rounded-xl bg-background/30">
-                        <Search className="w-4 h-4 ml-2 text-muted-foreground shrink-0" />
+                        <Search className="w-4 h-4 ml-3 text-muted-foreground shrink-0" />
                         <input
-                          className="flex-1 p-2 text-sm outline-none bg-transparent min-w-0"
+                          className="flex-1 p-2.5 text-sm outline-none bg-transparent min-w-0"
                           placeholder="Buscar música..."
                           value={searchOpen === i ? searchText : (selectedMusica ? `${selectedMusica.titulo}${selectedMusica.artista ? ' - ' + selectedMusica.artista : ''}` : '')}
                           onFocus={() => { setSearchOpen(i); setSearchText('') }}
@@ -404,23 +404,23 @@ export default function EscalasPage() {
                           onBlur={() => setTimeout(() => setSearchOpen(null), 200)}
                         />
                         {selectedMusica && (
-                          <button className="mr-2 text-muted-foreground hover:text-foreground shrink-0" onClick={() => {
+                          <button className="mr-3 text-muted-foreground hover:text-foreground shrink-0" onClick={() => {
                             const next = [...repertorio]; next[i].musica_id = ''; setRepertorio(next)
                             setSearchOpen(null); setSearchText('')
                           }}>
-                            <X className="w-3 h-3" />
+                            <X className="w-4 h-4" />
                           </button>
                         )}
                       </div>
                       {searchOpen === i && (
                         <div className="absolute z-50 top-full left-0 right-0 mt-1 glass-strong rounded-xl shadow-lg max-h-48 overflow-y-auto">
                           {filtered.length === 0 && (
-                            <div className="p-2 text-sm text-muted-foreground">Nenhuma música encontrada</div>
+                            <div className="p-3 text-sm text-muted-foreground">Nenhuma música encontrada</div>
                           )}
                           {filtered.map(m => (
                             <button
                               key={m.id}
-                              className={`w-full text-left px-3 py-2 text-sm hover:bg-accent/50 transition-colors ${r.musica_id === m.id ? 'text-purple-400 gradient-purple-subtle' : ''}`}
+                              className={`w-full text-left px-4 py-2.5 text-sm hover:bg-accent/50 transition-colors ${r.musica_id === m.id ? 'text-purple-400 gradient-purple-subtle' : ''}`}
                               onMouseDown={(e) => {
                                 e.preventDefault()
                                 const next = [...repertorio]; next[i].musica_id = m.id; setRepertorio(next)
@@ -433,10 +433,12 @@ export default function EscalasPage() {
                         </div>
                       )}
                     </div>
-                    <Input className="text-sm text-center bg-background/30" placeholder="Tom" value={r.tom} onChange={e => {
+                  </div>
+                  <div className="flex items-center gap-2 sm:ml-auto">
+                    <Input className="w-20 text-sm text-center bg-background/30" placeholder="Tom" value={r.tom} onChange={e => {
                       const next = [...repertorio]; next[i].tom = e.target.value; setRepertorio(next)
                     }} />
-                    <select className="p-2 border border-border/50 rounded-xl text-sm bg-background/30 text-sm" value={r.categoria} onChange={e => setCategoria(i, e.target.value)}>
+                    <select className="p-2.5 border border-border/50 rounded-xl text-sm bg-background/30" value={r.categoria} onChange={e => setCategoria(i, e.target.value)}>
                       <option value="adoracao">Adoração</option>
                       <option value="celebracao">Celebração</option>
                       <option value="ceia">Ceia</option>
@@ -444,10 +446,10 @@ export default function EscalasPage() {
                       <option value="encerramento">Encerramento</option>
                       <option value="especial">Especial</option>
                     </select>
+                    <Button variant="ghost" size="sm" className="text-destructive px-2" onClick={() => removeMusica(i)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="sm" className="text-destructive px-2" onClick={() => removeMusica(i)}>
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
                 </div>
               )
             })}
