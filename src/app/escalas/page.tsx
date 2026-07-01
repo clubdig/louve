@@ -371,7 +371,7 @@ export default function EscalasPage() {
       </div>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto glass-strong border-glow">
+        <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto glass-strong border-glow p-6">
           <DialogHeader>
             <DialogTitle className="text-gradient">Repertório do Culto</DialogTitle>
           </DialogHeader>
@@ -390,8 +390,8 @@ export default function EscalasPage() {
               )
               return (
                 <div key={i} className={`flex items-center gap-2 p-3 rounded-xl border transition-all ${isLast ? 'border-orange-500/30 gradient-purple-subtle' : 'glass'}`}>
-                  <span className="text-lg font-bold text-purple-400 min-w-[40px] text-center">{i + 1}º</span>
-                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-[1fr_80px_100px] gap-2 items-center">
+                  <span className="text-lg font-bold text-purple-400 min-w-[40px] text-center shrink-0">{i + 1}º</span>
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-[1fr_100px_140px] gap-2 items-center">
                     <div className="relative">
                       <div className="flex items-center border border-border/50 rounded-xl bg-background/30">
                         <Search className="w-4 h-4 ml-2 text-muted-foreground shrink-0" />
@@ -436,7 +436,7 @@ export default function EscalasPage() {
                     <Input className="text-sm text-center bg-background/30" placeholder="Tom" value={r.tom} onChange={e => {
                       const next = [...repertorio]; next[i].tom = e.target.value; setRepertorio(next)
                     }} />
-                    <select className="p-2 border border-border/50 rounded-xl text-sm bg-background/30" value={r.categoria} onChange={e => setCategoria(i, e.target.value)}>
+                    <select className="p-2 border border-border/50 rounded-xl text-sm bg-background/30 text-sm" value={r.categoria} onChange={e => setCategoria(i, e.target.value)}>
                       <option value="adoracao">Adoração</option>
                       <option value="celebracao">Celebração</option>
                       <option value="ceia">Ceia</option>
