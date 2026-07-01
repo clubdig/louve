@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { getDb } from '@/lib/db'
 import { hashPassword } from '@/lib/auth'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from('usuarios')
     .select('id, nome, email, funcao, telefone, foto, status, created_at')
     .eq('id', id)
@@ -26,7 +26,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
   update.updated_at = new Date().toISOString()
 
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from('usuarios')
     .update(update)
     .eq('id', id)
@@ -39,7 +39,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { error } = await db.from('usuarios').delete().eq('id', id)
+  const { error } = await getDb().from('usuarios').delete().eq('id', id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }

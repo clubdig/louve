@@ -5,6 +5,10 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value
   const { pathname } = request.nextUrl
 
+  if (pathname === '/api/auth/logout') {
+    return NextResponse.next()
+  }
+
   if (pathname.startsWith('/login') || pathname.startsWith('/api/auth')) {
     if (token) {
       return NextResponse.redirect(new URL('/', request.url))
@@ -12,7 +16,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (!token && pathname !== '/login') {
+  if (!token) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 

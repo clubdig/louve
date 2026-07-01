@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { getDb } from '@/lib/db'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const search = searchParams.get('search')
   const categoria = searchParams.get('categoria')
 
-  let query = db.from('musicas').select('*').order('titulo')
+  let query = getDb().from('musicas').select('*').order('titulo')
 
   if (search) {
     query = query.or(`titulo.ilike.%${search}%,artista.ilike.%${search}%`)
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
   if (!titulo) return NextResponse.json({ error: 'Título é obrigatório' }, { status: 400 })
 
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from('musicas')
     .insert({
       titulo, artista, tom_original, tom_atual, versao, bpm,

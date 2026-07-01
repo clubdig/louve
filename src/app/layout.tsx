@@ -8,6 +8,7 @@ const inter = Inter({ variable: "--font-sans", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Louve - Ministério de Louvor",
   description: "Sistema de Gestão do Ministério de Louvor",
+  icons: { icon: '/favicon.svg' },
 };
 
 export default function RootLayout({

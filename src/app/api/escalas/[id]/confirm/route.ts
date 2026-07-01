@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { getDb } from '@/lib/db'
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { confirmado } = await request.json()
 
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from('escalas')
     .update({ confirmado })
     .eq('id', id)

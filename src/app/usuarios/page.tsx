@@ -5,9 +5,8 @@ import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Plus, Users, Trash2, Mail, Phone } from 'lucide-react'
 import { toast } from 'sonner'
@@ -28,14 +27,14 @@ const funcoes = [
 ]
 
 const funcaoColors: Record<string, string> = {
-  admin: 'bg-red-100 text-red-800',
-  ministro: 'bg-purple-100 text-purple-800',
-  vocal: 'bg-blue-100 text-blue-800',
-  baixo: 'bg-green-100 text-green-800',
-  bateria: 'bg-orange-100 text-orange-800',
-  guitarra: 'bg-yellow-100 text-yellow-800',
-  violao: 'bg-teal-100 text-teal-800',
-  teclado: 'bg-pink-100 text-pink-800',
+  admin: 'bg-red-500/15 text-red-400 border-red-500/20',
+  ministro: 'bg-purple-500/15 text-purple-400 border-purple-500/20',
+  vocal: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
+  baixo: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+  bateria: 'bg-orange-500/15 text-orange-400 border-orange-500/20',
+  guitarra: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/20',
+  violao: 'bg-teal-500/15 text-teal-400 border-teal-500/20',
+  teclado: 'bg-pink-500/15 text-pink-400 border-pink-500/20',
 }
 
 export default function UsuariosPage() {
@@ -83,46 +82,46 @@ export default function UsuariosPage() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Usuários</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gradient">Usuários</h1>
             <p className="text-muted-foreground">{usuarios.length} membros cadastrados</p>
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger render={<Button />}>
-              <Button><Plus className="w-4 h-4 mr-2" /> Novo Usuário</Button>
-            </DialogTrigger>
-            <DialogContent>
+            <Button onClick={() => setDialogOpen(true)} className="gradient-purple text-white glow-purple-sm hover:opacity-90">
+              <Plus className="w-4 h-4 mr-2" /> Novo Usuário
+            </Button>
+            <DialogContent className="glass-strong border-glow">
               <DialogHeader>
-                <DialogTitle>Novo Usuário</DialogTitle>
+                <DialogTitle className="text-gradient">Novo Usuário</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Nome *</Label>
-                  <Input value={form.nome} onChange={e => setForm({...form, nome: e.target.value})} required />
+                  <Label className="text-muted-foreground">Nome *</Label>
+                  <Input value={form.nome} onChange={e => setForm({...form, nome: e.target.value})} className="bg-background/50" required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Email *</Label>
-                  <Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
+                  <Label className="text-muted-foreground">Email *</Label>
+                  <Input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="bg-background/50" required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Senha *</Label>
-                  <Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
+                  <Label className="text-muted-foreground">Senha *</Label>
+                  <Input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} className="bg-background/50" required />
                 </div>
                 <div className="space-y-2">
-                  <Label>Função</Label>
+                  <Label className="text-muted-foreground">Função</Label>
                   <Select value={form.funcao} onValueChange={v => { if (v) setForm({...form, funcao: v}) }}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="bg-background/50"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {funcoes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Telefone</Label>
-                  <Input value={form.telefone} onChange={e => setForm({...form, telefone: e.target.value})} />
+                  <Label className="text-muted-foreground">Telefone</Label>
+                  <Input value={form.telefone} onChange={e => setForm({...form, telefone: e.target.value})} className="bg-background/50" />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-                  <Button type="submit">Criar</Button>
+                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)} className="border-border/50">Cancelar</Button>
+                  <Button type="submit" className="gradient-purple text-white hover:opacity-90">Criar</Button>
                 </div>
               </form>
             </DialogContent>
@@ -131,46 +130,44 @@ export default function UsuariosPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {usuarios.map(u => (
-            <Card key={u.id} className="group hover:shadow-md transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-lg">
-                      {u.nome?.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{u.nome}</CardTitle>
-                      <Badge className={funcaoColors[u.funcao] || 'bg-gray-100'}>
-                        {funcoes.find(f => f.value === u.funcao)?.label || u.funcao}
-                      </Badge>
-                    </div>
+            <div key={u.id} className="glass rounded-2xl p-4 hover:glow-purple-sm transition-all group">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl gradient-purple flex items-center justify-center text-white font-bold text-lg shrink-0">
+                    {u.nome?.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{u.nome}</h3>
+                    <Badge variant="outline" className={`text-xs mt-1 ${funcaoColors[u.funcao] || ''}`}>
+                      {funcoes.find(f => f.value === u.funcao)?.label || u.funcao}
+                    </Badge>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-2">
+              </div>
+              <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Mail className="w-4 h-4" /> {u.email}
+                  <Mail className="w-3.5 h-3.5" /> {u.email}
                 </div>
                 {u.telefone && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Phone className="w-4 h-4" /> {u.telefone}
+                    <Phone className="w-3.5 h-3.5" /> {u.telefone}
                   </div>
                 )}
-                <div className="flex gap-2 pt-2">
-                  <Badge variant={u.status === 'ativo' ? 'default' : 'secondary'}>
-                    {u.status === 'ativo' ? 'Ativo' : 'Inativo'}
-                  </Badge>
-                  <Button variant="ghost" size="sm" className="ml-auto text-destructive hover:text-destructive" onClick={() => handleDelete(u.id)}>
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="flex gap-2 pt-3">
+                <Badge variant={u.status === 'ativo' ? 'default' : 'secondary'} className="text-xs">
+                  {u.status === 'ativo' ? 'Ativo' : 'Inativo'}
+                </Badge>
+                <Button variant="ghost" size="sm" className="ml-auto text-destructive hover:text-destructive" onClick={() => handleDelete(u.id)}>
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
           ))}
         </div>
 
         {usuarios.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="glass rounded-2xl p-12 text-center text-muted-foreground">
             <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p>Nenhum usuário cadastrado</p>
           </div>

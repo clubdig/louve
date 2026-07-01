@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { getDb } from '@/lib/db'
 
 export async function GET() {
-  const { data: musicas, error: e1 } = await db
+  const { data: musicas, error: e1 } = await getDb()
     .from('musicas')
     .select('id, titulo, artista, categoria')
     .order('titulo')
@@ -11,12 +11,12 @@ export async function GET() {
 
   const results = await Promise.all(
     (musicas || []).map(async (m) => {
-      const { count } = await db
+      const { count } = await getDb()
         .from('musica_historico')
         .select('*', { count: 'exact', head: true })
         .eq('musica_id', m.id)
 
-      const { data: ultimo } = await db
+      const { data: ultimo } = await getDb()
         .from('musica_historico')
         .select('created_at, cultos(data)')
         .eq('musica_id', m.id)

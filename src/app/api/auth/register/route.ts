@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
 import { hashPassword, signToken } from '@/lib/auth'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import { getDb } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,6 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nome, email e senha são obrigatórios' }, { status: 400 })
     }
 
+    const supabase = getDb()
     const { data: existing } = await supabase
       .from('usuarios')
       .select('id')

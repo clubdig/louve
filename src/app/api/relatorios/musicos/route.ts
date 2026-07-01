@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { getDb } from '@/lib/db'
 
 export async function GET() {
-  const { data: usuarios, error: e1 } = await db
+  const { data: usuarios, error: e1 } = await getDb()
     .from('usuarios')
     .select('id, nome, funcao')
     .eq('status', 'ativo')
@@ -12,12 +12,12 @@ export async function GET() {
 
   const results = await Promise.all(
     (usuarios || []).map(async (u) => {
-      const { count } = await db
+      const { count } = await getDb()
         .from('escalas')
         .select('*', { count: 'exact', head: true })
         .eq('usuario_id', u.id)
 
-      const { data: ultimo } = await db
+      const { data: ultimo } = await getDb()
         .from('escalas')
         .select('cultos(data)')
         .eq('usuario_id', u.id)
@@ -25,7 +25,7 @@ export async function GET() {
         .limit(1)
         .single()
 
-      const { count: confirmadas } = await db
+      const { count: confirmadas } = await getDb()
         .from('escalas')
         .select('*', { count: 'exact', head: true })
         .eq('usuario_id', u.id)

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { getDb } from '@/lib/db'
 import { hashPassword } from '@/lib/auth'
 
 export async function GET() {
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from('usuarios')
     .select('id, nome, email, funcao, telefone, foto, status, created_at')
     .order('nome')
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
   const senha_hash = await hashPassword(password)
 
-  const { data, error } = await db
+  const { data, error } = await getDb()
     .from('usuarios')
     .insert({ nome, email, senha_hash, funcao: funcao || 'vocal', telefone, status: 'ativo' })
     .select('id, nome, email, funcao, telefone, foto, status')
