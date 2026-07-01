@@ -9,9 +9,9 @@ export const metadata: Metadata = {
   title: "Louve - Ministério de Louvor",
   description: "Sistema de Gestão do Ministério de Louvor",
   icons: { 
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: '/favicon.svg?v=' + Date.now(),
+    shortcut: '/favicon.svg?v=' + Date.now(),
+    apple: '/favicon.svg?v=' + Date.now(),
   },
 };
 
