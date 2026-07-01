@@ -404,7 +404,7 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <DialogTitle className="text-gradient text-lg">Playlist da Semana</DialogTitle>
-                      <p className="text-xs text-muted-foreground">{proximoCulto.tema} • {songs.length} músicas</p>
+                      <p className="text-xs text-muted-foreground">{ultimaPlaylist.tema || 'Sem tema'} • {songs.length} músicas</p>
                     </div>
                   </div>
                 </div>
