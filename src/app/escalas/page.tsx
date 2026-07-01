@@ -314,12 +314,16 @@ export default function EscalasPage() {
                           {escala.confirmado && <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20">Confirmado ✓</Badge>}
                         </div>
                         <div className="flex gap-2">
-                          <Button size="sm" variant={escala.confirmado ? 'default' : 'outline'} onClick={() => confirmar(escala.id, true)} className={escala.confirmado ? 'gradient-purple text-white' : 'border-border/50'}>
-                            <Check className="w-4 h-4 mr-1" /> Confirmar
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => confirmar(escala.id, false)} className="border-border/50">
-                            <X className="w-4 h-4 mr-1" /> Não poderei
-                          </Button>
+                          {!escala.confirmado && (
+                            <>
+                              <Button size="sm" variant="outline" onClick={() => confirmar(escala.id, true)} className="gradient-purple text-white">
+                                <Check className="w-4 h-4 mr-1" /> Confirmar
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => confirmar(escala.id, false)} className="border-border/50">
+                                <X className="w-4 h-4 mr-1" /> Não poderei
+                              </Button>
+                            </>
+                          )}
                         </div>
                         <div className="pt-2 border-t border-border/50">
                           <Button variant="outline" size="sm" className="w-full border-border/50" onClick={() => openRepertorio(escala.culto_id)}>
