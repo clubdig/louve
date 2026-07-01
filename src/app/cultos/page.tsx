@@ -72,6 +72,7 @@ export default function CultosPage() {
   const [repertorio, setRepertorio] = useState<{ musica_id: string; ordem: number; tom: string; observacao: string }[]>([])
   const [escala, setEscala] = useState<{ usuario_id: string; funcao: string }[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [currentUser, setCurrentUser] = useState<{ id: string; funcao: string } | null>(null)
 
   const now = new Date()
   const [filterMonth, setFilterMonth] = useState(now.getMonth())
@@ -81,6 +82,7 @@ export default function CultosPage() {
     loadCultos()
     fetch('/api/musicas').then(r => r.json()).then(d => setMusicas(Array.isArray(d) ? d : []))
     fetch('/api/usuarios').then(r => r.json()).then(d => setUsuarios(Array.isArray(d) ? d : []))
+    fetch('/api/auth/me').then(r => r.json()).then(d => setCurrentUser(d.user || null)).catch(() => {})
   }, [])
 
   async function loadCultos() {
@@ -93,6 +95,12 @@ export default function CultosPage() {
     const d = new Date(c.data + 'T12:00:00')
     return d.getMonth() === filterMonth && d.getFullYear() === filterYear
   }).sort((a, b) => a.data.localeCompare(b.data))
+
+  function canEditCulto(culto: Culto): boolean {
+    if (!currentUser) return false
+    if (currentUser.funcao === 'admin') return true
+    return culto.escalas?.some(e => e.usuarios?.id === currentUser.id) ?? false
+  }
 
   function prevMonth() {
     if (filterMonth === 0) { setFilterMonth(11); setFilterYear(y => y - 1) }
@@ -285,12 +293,16 @@ export default function CultosPage() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-1 shrink-0">
-                      <Button variant="ghost" size="sm" onClick={() => openEdit(culto)} className="text-muted-foreground hover:text-foreground h-8 w-8 p-0">
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => handleDelete(culto.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {canEditCulto(culto) && (
+                        <Button variant="ghost" size="sm" onClick={() => openEdit(culto)} className="text-muted-foreground hover:text-foreground h-8 w-8 p-0">
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                      )}
+                      {canEditCulto(culto) && (
+                        <Button variant="ghost" size="sm" className="text-destructive h-8 w-8 p-0" onClick={() => handleDelete(culto.id)}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                       <button
                         onClick={() => setExpandedId(isExpanded ? null : culto.id)}
                         className="p-2 rounded-lg hover:bg-accent transition-colors"
