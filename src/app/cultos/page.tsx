@@ -72,7 +72,7 @@ export default function CultosPage() {
   const [repertorio, setRepertorio] = useState<{ musica_id: string; ordem: number; tom: string; observacao: string }[]>([])
   const [escala, setEscala] = useState<{ usuario_id: string; funcao: string }[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [currentUser, setCurrentUser] = useState<{ id: string; funcao: string } | null>(null)
+  const [currentUser, setCurrentUser] = useState<{ userId: string; funcao: string } | null>(null)
 
   const now = new Date()
   const [filterMonth, setFilterMonth] = useState(now.getMonth())
@@ -99,7 +99,7 @@ export default function CultosPage() {
   function canEditCulto(culto: Culto): boolean {
     if (!currentUser) return false
     if (currentUser.funcao === 'admin') return true
-    return culto.escalas?.some(e => e.usuarios?.id === currentUser.id) ?? false
+    return culto.escalas?.some(e => e.usuarios?.id === currentUser.userId) ?? false
   }
 
   function prevMonth() {
