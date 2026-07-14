@@ -38,6 +38,8 @@ const categoriaColors: Record<string, string> = {
 
 export default function MusicasPage() {
   const [musicas, setMusicas] = useState<Musica[]>([])
+  const [user, setUser] = useState<{ funcao: string } | null>(null)
+  const isAdmin = user?.funcao === 'admin'
   const [search, setSearch] = useState('')
   const [filtroCategoria, setFiltroCategoria] = useState('all')
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -48,7 +50,11 @@ export default function MusicasPage() {
     categoria: 'adoracao', observacoes: '',
   })
 
-  useEffect(() => { loadMusicas() }, [])
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem('user') || '{}')
+    if (stored.funcao) setUser(stored)
+    loadMusicas()
+  }, [])
 
   async function loadMusicas() {
     const params = new URLSearchParams()
@@ -122,9 +128,11 @@ export default function MusicasPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-gradient">Músicas</h1>
             <p className="text-muted-foreground">{musicas.length} músicas cadastradas</p>
           </div>
-          <Button onClick={() => { setEditando(null); resetForm(); setDialogOpen(true) }} className="gradient-purple text-white glow-purple-sm hover:opacity-90">
-            <Plus className="w-4 h-4 mr-2" /> Nova Música
-          </Button>
+          {isAdmin && (
+            <Button onClick={() => { setEditando(null); resetForm(); setDialogOpen(true) }} className="gradient-purple text-white glow-purple-sm hover:opacity-90">
+              <Plus className="w-4 h-4 mr-2" /> Nova Música
+            </Button>
+          )}
         </div>
 
         <Dialog open={dialogOpen} onOpenChange={(v) => { setDialogOpen(v); if (!v) { setEditando(null); resetForm() } }}>
@@ -230,8 +238,12 @@ export default function MusicasPage() {
               <div className="flex gap-1 pt-3 border-t border-border/50">
                 {m.youtube && <a href={m.youtube} target="_blank" rel="noopener noreferrer"><Button variant="ghost" size="sm" className="text-purple-400 hover:text-purple-300"><ExternalLink className="w-4 h-4" /></Button></a>}
                 {m.cifra && <a href={m.cifra} target="_blank" rel="noopener noreferrer"><Button variant="ghost" size="sm" className="text-purple-400 hover:text-purple-300"><Music className="w-4 h-4" /></Button></a>}
-                <Button variant="ghost" size="sm" onClick={() => openEdit(m)} className="text-muted-foreground hover:text-foreground">Editar</Button>
-                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive ml-auto" onClick={() => handleDelete(m.id)}><Trash2 className="w-4 h-4" /></Button>
+                {isAdmin && (
+                  <>
+                    <Button variant="ghost" size="sm" onClick={() => openEdit(m)} className="text-muted-foreground hover:text-foreground">Editar</Button>
+                    <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive ml-auto" onClick={() => handleDelete(m.id)}><Trash2 className="w-4 h-4" /></Button>
+                  </>
+                )}
               </div>
             </div>
           ))}

@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
-import { hashPassword } from '@/lib/auth'
+import { hashPassword, verifyToken } from '@/lib/auth'
 
-export async function GET() {
+function checkAdmin(request: NextRequest) {
+  const token = request.cookies.get('auth-token')?.value
+  if (!token) return null
+  const payload = verifyToken(token)
+  if (!payload || payload.funcao !== 'admin') return null
+  return payload
+}
+
+export async function GET(request: NextRequest) {
+  const admin = checkAdmin(request)
+  if (!admin) return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+
   const { data, error } = await getDb()
     .from('usuarios')
     .select('id, nome, email, funcao, telefone, foto, status, created_at')
@@ -13,6 +24,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const admin = checkAdmin(request)
+  if (!admin) return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+
   const body = await request.json()
   const { nome, email, password, funcao, telefone } = body
 

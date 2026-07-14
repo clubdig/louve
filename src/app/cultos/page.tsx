@@ -211,9 +211,11 @@ export default function CultosPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-gradient">Cultos</h1>
             <p className="text-muted-foreground text-sm">{filteredCultos.length} culto(s) em {mesLabels[filterMonth]}</p>
           </div>
-          <Button onClick={openNew} className="gradient-purple text-white glow-purple-sm hover:opacity-90">
-            <Plus className="w-4 h-4 mr-2" /> Novo Culto
-          </Button>
+          {currentUser?.funcao === 'admin' && (
+            <Button onClick={openNew} className="gradient-purple text-white glow-purple-sm hover:opacity-90">
+              <Plus className="w-4 h-4 mr-2" /> Novo Culto
+            </Button>
+          )}
         </div>
 
         {/* Month Navigator */}

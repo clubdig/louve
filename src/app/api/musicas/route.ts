@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
+import { verifyToken } from '@/lib/auth'
+
+function getAuth(request: NextRequest) {
+  const token = request.cookies.get('auth-token')?.value
+  if (!token) return null
+  return verifyToken(token)
+}
 
 export async function GET(request: NextRequest) {
+  const auth = getAuth(request)
+  if (!auth) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+
   const { searchParams } = new URL(request.url)
   const search = searchParams.get('search')
   const categoria = searchParams.get('categoria')
@@ -21,6 +31,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = getAuth(request)
+  if (!auth || auth.funcao !== 'admin') {
+    return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+  }
+
   const body = await request.json()
   const { titulo, artista, tom_original, tom_atual, versao, bpm, youtube, cifra, spotify, playback, multitrack, categoria, observacoes } = body
 

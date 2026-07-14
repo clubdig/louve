@@ -10,7 +10,7 @@ import { Settings } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function ConfiguracoesPage() {
-  const [user, setUser] = useState<{ userId: string; nome: string; email: string; funcao: string } | null>(null)
+  const [user, setUser] = useState<{ id: string; nome: string; email: string; funcao: string } | null>(null)
   const [form, setForm] = useState({ nome: '', telefone: '' })
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function ConfiguracoesPage() {
 
   async function handleSave() {
     if (!user) return
-    const res = await fetch(`/api/usuarios/${user.userId}`, {
+    const res = await fetch(`/api/usuarios/${user.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
